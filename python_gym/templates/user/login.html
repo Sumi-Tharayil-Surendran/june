@@ -1,0 +1,249 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <title>Login</title>
+    <style>
+        body {
+            background: #fff;
+            font-family: Assistant, sans-serif;
+            display: flex;
+            min-height: 90vh;
+        }
+        
+        .login {
+            color: white;
+            background: #136a8a;
+            background: -webkit-linear-gradient(to right, #267871, #136a8a);
+            background: linear-gradient(to right, #267871, #136a8a);
+            margin: auto;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2), 0px 10px 20px rgba(0, 0, 0, 0.3), 0px 30px 60px 1px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 50px;
+        }
+        
+        .login .head {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login .head .company {
+            font-size: 2.2em;
+        }
+        
+        .login .msg {
+            text-align: center;
+        }
+        
+        .login .form input[type=text].text {
+            border: none;
+            background: none;
+            box-shadow: 0px 2px 0px 0px white;
+            width: 100%;
+            color: white;
+            font-size: 1em;
+            outline: none;
+        }
+        
+        .login .form .text::placeholder {
+            color: #D3D3D3;
+        }
+        
+        .login .form input[type=password].password {
+            border: none;
+            background: none;
+            box-shadow: 0px 2px 0px 0px white;
+            width: 100%;
+            color: white;
+            font-size: 1em;
+            outline: none;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        
+        .login .form .password::placeholder {
+            color: #D3D3D3;
+        }
+        
+        .login .form .btn-login {
+            background: none;
+            text-decoration: none;
+            color: white;
+            box-shadow: 0px 0px 0px 2px white;
+            border-radius: 3px;
+            padding: 5px 6em;
+            transition: 0.5s;
+        }
+        
+        .login .form .btn-login:hover {
+            background: white;
+            color: dimgray;
+            transition: 0.5s;
+        }
+        
+        .login .forgot {
+            text-decoration: none;
+            color: white;
+            float: right;
+        }
+        
+        footer {
+            position: absolute;
+            color: #136a8a;
+            bottom: 10px;
+            padding-left: 20px;
+        }
+        
+        footer p {
+            display: inline;
+        }
+        
+        footer a {
+            color: green;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        footer .heart {
+            color: #B22222;
+            font-size: 1.5em
+        }
+    </style>
+</head>
+
+<body>
+    <section class='login' id='login'>
+        <div class='head'>
+            <img src="{% static 'assets/images/gym-icon.jpg'%}" style=" border-radius: 5px;">
+            <!-- <h1 class='company'>Universe Explorer</h1> -->
+        </div>
+        <p class='msg'>Welcome back</p>
+        <div class='form'>
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" placeholder='Username' class='text' name='username' required><br>
+                <input type="password" placeholder='••••••••••••••' class='password' name="password"><br>
+                <input class='btn-login' type="submit" value="Login" />
+                <br>
+                <br>
+                <a href="{% url 'register' %}" class='' id='do-regiser'>Register</a>
+                <!-- <a href="#" class='forgot'>Forgot?</a> -->
+            </form>
+        </div>
+    </section>
+    <footer>
+        <p>©2022 Gym, Inc.</p>
+    </footer>
+    <!-- modal to show normal messages -->
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        var _token = "";
+        $(document).ready(function() {
+            //clearing the token
+            localStorage.setItem('_token', '');
+            $('.message-modal-close').on('click', function() {
+                $('#message-modal').hide();
+            })
+            $('.register-modal-close').on('click', function() {
+                $('#register-modal').hide();
+            })
+            $('#do-regiser').on('click', function() {
+                $('#register-modal').show();
+            })
+
+            $('.register-modal-save').on('click', function() {
+                var email = $('#txt-register-email').val()
+                var mobile = $('#txt-register-mobile').val()
+                var password = $('#txt-register-password').val()
+                var otp = $('#txt-register-otp').val()
+                if (email == "") {
+                    MessageShow('Alert', 'Email field is empty')
+                } else if (!isEmail(email)) {
+                    MessageShow('Alert', 'Email is invalid')
+                } else if (mobile == "") {
+                    MessageShow('Alert', 'Moble number is empty')
+                } else if (isNaN(mobile)) {
+                    MessageShow('Alert', 'Mobile number should be a number')
+                } else if (mobile.length != 13) {
+                    MessageShow('Alert', 'Mobile number should have 13 digits')
+                } else if (password == "") {
+                    MessageShow('Alert', 'Password is empty')
+                } else if (otp == "") {
+                    MessageShow('Alert', 'OTP is empty')
+                } else {
+                    MessageShow('Alert', 'User registered successfully, please login now')
+                    $('#register-modal').hide();
+                }
+            })
+
+            $('#do-login').on('click', function() {
+                var username = $('#username').val();
+                var password = $('#password').val();
+                if (username.trim() == "" || password.trim() == "") {
+                    //  alert('Please provide valid credentials.')
+                    MessageShow("Alert", "Please provide valid credentials.")
+                } else {
+                    $.getJSON('assets/json/user.json', function(result) {
+                        var isAuthenticated = false;
+                        var token = "",
+                            name = "";
+                        $.each(result.Users, function(i, v) {
+                            console.log(v.Email);
+                            console.log(v['Email'])
+                            if (v.Email == username && v.Password == password) {
+                                isAuthenticated = true;
+                                token = v.Token;
+                                name = v.Name;
+                                return;
+                            }
+                        })
+                        if (isAuthenticated) {
+                            localStorage.setItem('_token', token);
+                            localStorage.setItem('_username', name);
+                            window.location.replace("index.html");
+                        } else {
+                            alert('Invalid credentials')
+                        }
+
+                    });
+
+                }
+            });
+        });
+
+        function isEmail(email) {
+            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            return regex.test(email);
+        }
+
+        function IsUserLoggedIn() {
+            var token = localStorage.getItem('_token');
+            if (token == null || token == "") {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function MessageShow(heading, body) {
+            $('#message-modal .modal-title').html(heading)
+            $('#message-modal .modal-body').html('<p>' + body + '</p>')
+            $('#message-modal').show();
+        }
+    </script>
+</body>
+
+</html>

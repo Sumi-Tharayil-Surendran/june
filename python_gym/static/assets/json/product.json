@@ -1,0 +1,38 @@
+[{
+    "ID": "item-1",
+    "URL": "assets/images/items/dumple.jpg",
+    "Title": "Dumple",
+    "Price": "4.99",
+    "Description": "A pair of dumples!",
+    "DescriptionDetail": "Praesent ac condimentum felis. Nulla at nisl orci, at dignissim dolor, The best product descriptions address your ideal buyer directly and personally. The best product descriptions address your ideal buyer directly and personally.",
+    "Category": "Metal",
+    "Quanity": 1
+}, {
+    "ID": "item-2",
+    "URL": "assets/images/items/dumple-small.jpg",
+    "Title": "Small Dumple SM",
+    "Price": "14.99",
+    "Description": "A pair of small dumples!",
+    "DescriptionDetail": "Praesent ac condimentum felis. Nulla at nisl orci, at dignissim dolor, The best product descriptions address your ideal buyer directly and personally. The best product descriptions address your ideal buyer directly and personally.",
+    "Category": "Stone",
+    "Quanity": 1
+}, {
+    "ID": "item-3",
+    "URL": "assets/images/items/dumple-color.jpg",
+    "Title": "Color Dumple SM",
+    "Price": "20",
+    "Description": "A pair of color Dumples!",
+    "DescriptionDetail": "Praesent ac condimentum felis. Nulla at nisl orci, at dignissim dolor, The best product descriptions address your ideal buyer directly and personally. The best product descriptions address your ideal buyer directly and personally.",
+    "Category": "Metal",
+    "Quanity": 1
+
+}, {
+    "ID": "item-4",
+    "URL": "assets/images/items/lift-up.jpg",
+    "Title": "Power Lift",
+    "Price": "15",
+    "Description": "Power lift!",
+    "DescriptionDetail": "Praesent ac condimentum felis. Nulla at nisl orci, at dignissim dolor, The best product descriptions address your ideal buyer directly and personally. The best product descriptions address your ideal buyer directly and personally.",
+    "Category": "Metal",
+    "Quanity": 1
+}]

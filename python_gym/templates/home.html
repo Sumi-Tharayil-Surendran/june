@@ -1,0 +1,278 @@
+{% extends 'base.html' %} {% load static %} {% block css%}
+<link rel="stylesheet" href="{% static '/assets/css/index.css' %}">
+<link rel="stylesheet" href="{% static '/assets/css/index-images.css' %}">{% endblock %} {% block title%}
+<title>Equipments</title>{% endblock %} {% block content%}
+<div class="container">
+    <style>
+        .search-bar {
+            border: solid 1px green;
+            height: 20px;
+            line-height: 20px;
+            vertical-align: middle
+        }
+        
+        .go-button {
+            border: solid 1px green;
+            height: 22px;
+            line-height: 13px;
+            vertical-align: middle;
+            z-index: 100000;
+        }
+    </style>
+    <input type="text" name="item-1-quantity" class="search-bar" placeholder="search the product.." value="" style="width:38%;z-index: 100000; 
+    border-width: 0 0 2px;outline: 0;margin-left:14%;float:left"><input type="button" value="GO" class="go-button btn" style="width:7%;float:right;margin-top:-24px;margin-right: 40%;">
+</div>
+
+<div class="listing-section">
+
+
+
+</div>
+
+<!-- modal to show when the user is ont logged in  -->
+<div id="login-confirmation" class="modal" tabindex="-1" style="margin-top: 8%;z-index: 100001!important;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="width: 90%;">Alert</h5>
+                <button type="button" class="close login-confirmation-close" data-dismiss="modal" aria-label="Close" style="text-align: right;"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p>To reserve a product you have to login first.</p>
+            </div>
+            <div class="modal-footer">
+                <button style="width:50%" type="button" class="btn btn-secondary login-confirmation-close">Close</button>
+                <!-- <button id="login-confirmation-login" type="button" class="btn btn-primary">Login</button> -->
+                <a style="width:50%" href="{% url 'login' %}" class="btn btn-primary" id='do-regiser'>Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal to show normal messages -->
+<div id="message-modal" class="modal" tabindex="-1" style="margin-top: 8%;z-index: 100002!important;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="width: 90%;">Alert</h5>
+                <button type="button" class="close message-modal-close" data-dismiss="modal" aria-label="Close" style="text-align: right;"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <!-- <p>To add an item to the cart you have to login first.</p> -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary message-modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- product modal -->
+<div id="product-modal" class="modal" tabindex="-1" style="margin-top: 8%;z-index: 100000!important;">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <!-- <div class="modal-header">
+                    <h5 class="modal-title" style="width: 90%;">Alert</h5>
+                    <button type="button" class="close message-modal-close" data-dismiss="modal" aria-label="Close" style="text-align: right;"><span aria-hidden="true">&times;</span></button>
+                </div> -->
+            <div class="modal-body">
+                <!-- <p>To add an item to the cart you have to login first.</p> -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <img class="product-modal-image" src="" style="width: 100%;" />
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="pro-d-title"> <a href="#" class=""> Loading.. </a></h4>
+                        <p class="product-description">Loading..</p>
+                        <div class="product_meta">
+                            <span class="posted_in"> <strong>Category:</strong> 
+                                <a rel="tag" href="#"></a>
+                        </div>
+                        <div class="m-bot15">
+                            <strong>Price : </strong> <span class="pro-price">..</span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"><span for="item-1-quantity"><strong>Quantity:</strong></span></div>
+                            <div class="col-md-9"><input disabled type="number" name="item-1-quantity" class="quantity" value="1"></div>
+
+
+                        </div>
+                        <p> <button class="btn btn-round btn-danger add-to-cart-modal" type="button"><i class="fa fa-shopping-cart"></i> Reserve</button></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn  product-modal-close" style="background-color: grey;">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block js%}
+<script src="{% static '/assets/js/index.js' %}"></script>
+{% if user.is_authenticated %}
+<script type="text/javascript">
+    var _isLoggedIn = true;
+</script>
+{% else %}
+<script type="text/javascript">
+    var _isLoggedIn = false;
+</script>
+{% endif %}
+<script>
+    var _selectedList = [];
+    $(document).ready(function() {
+        $('.login-confirmation-close').on('click', function() {
+            $('#login-confirmation').hide();
+        })
+        $('#login-confirmation-login').on('click', function() {
+            window.location.replace("login.html");
+        })
+        $('.message-modal-close').on('click', function() {
+            $('#message-modal').hide();
+        })
+
+        $('.product-modal-close').on('click', function() {
+            $('#product-modal').hide();
+        })
+        $('.go-button').on('click', function() {
+            $('.go-button').attr('disabled', 'disabled')
+            var val = $('.search-bar').val();
+            populateProducts(val)
+        })
+
+        /* $('.search-bar').on('keyup keydown', function() {
+             populateProducts($(this).val())
+         })*/
+        $(document).on('click', '.add-to-cart,.add-to-cart-modal', function() {
+            if (!IsUserLoggedIn()) {
+                $('#login-confirmation').show();
+                return;
+            }
+            var pid = $(this).attr('p-id');
+            //var quantity = $(this).siblings('.quantity').val();
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'product_reserve' %}",
+                data: {
+                    "productID": pid
+                },
+                success: function(response) {
+                    alert(response.result);
+                    notificationBadgeCounter();
+                },
+                error: function(response) {
+                    console.log(response)
+                }
+            })
+
+        })
+        $(document).on('click', '.product .images', function() {
+            if ($(this).hasClass('add-to-cart')) {
+                return;
+            }
+            // var img = $(this).find('.images').css("background-image")
+            var img = $(this).css("background-image")
+            img = (img).replace('url("', '').replace('")', '');
+            $('.product-modal-image').attr('src', img)
+            var pid = $(this).closest('.product').find('.add-to-cart').attr("p-id")
+            $('.add-to-cart-modal').attr('p-id', pid)
+            console.log(pid)
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'product_detail_get' %}",
+                data: {
+                    "productID": pid
+                },
+                success: function(result) {
+                    var curr_object = result.result[0];
+                    // if not valid user, alert the user
+                    //var curr_object = new_arr[0];
+                    $('#product-modal .pro-d-title a').html(curr_object.Title)
+                    $('#product-modal .product-description').html(curr_object.DescriptionDetail)
+                    $('#product-modal .posted_in a').html(curr_object.Category)
+                    $('#product-modal .pro-price').html(curr_object.Price)
+
+                },
+                error: function(response) {
+                    console.log(response)
+                }
+            })
+            $('#product-modal').show();
+        })
+        populateProducts("");
+        notificationBadgeCounter();
+
+    });
+
+    function populateProducts(searchText) {
+
+        //var searchText = "small";
+        searchText = searchText.toLocaleLowerCase();
+        //searchText = ""
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'products_get' %}",
+            data: {
+                "search_text": searchText
+            },
+            success: function(response) {
+                $('.go-button').removeAttr('disabled')
+                    // if not valid user, alert the user
+                $('.listing-section').empty();
+                $.each(response.result, function(i, v) {
+                    $('.listing-section').append('<div class="product"> \
+                        <div class="image-box"> \
+                            <div class="images" style="background-image: url(\'' + v.URL + '\');"></div> \
+                        </div> \
+                        <div class="text-box"> \
+                            <h2 class="item">' + v.Title + '</h2> \
+                            <h3 class="price">$' + v.Price + '</h3> \
+                            <p class="description">' + v.Description + '</p> \
+                            <label for="item-1-quantity">Quantity:</label> \
+                            <input disabled type="number" name="item-1-quantity" class="quantity" value="' + v.Quanity + '"> \
+                            <button type="button" name="item-1-button" class="add-to-cart" p-id="' + v.ID + '">Reserve</button> \
+                        </div> \
+                    </div>')
+
+
+                });
+
+            },
+            error: function(response) {
+                $('.go-button').removeAttr('disabled')
+                console.log(response)
+            }
+        })
+
+
+
+    }
+
+    function IsUserLoggedIn() {
+        return _isLoggedIn;
+    }
+
+    function MessageShow(heading, body) {
+        $('#message-modal .modal-title').html(heading)
+        $('#message-modal .modal-body').html('<p>' + body + '</p>')
+        $('#message-modal').show();
+    }
+
+    function notificationBadgeCounter() {
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'product_reserve_count' %}",
+            success: function(response) {
+                var count = response.result;
+                $(".icon-badge").html(count)
+
+            },
+            error: function(response) {
+                console.log(response)
+            }
+        })
+
+
+
+    }
+    // $('#divID').css("background-image", "url(/myimage.jpg)");
+</script>
+{% endblock %}

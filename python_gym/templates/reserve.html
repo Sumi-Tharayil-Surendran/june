@@ -1,0 +1,185 @@
+{% extends 'base.html' %} {% load static %} {% block css%}
+<link rel="stylesheet" href="{% static '/assets/css/index.css' %}">
+<link rel="stylesheet" href="{% static '/assets/css/index-images.css' %}"> {% endblock %} {% block title%}
+<title>Reserved</title>{% endblock %} {% block content%}
+<div class="cart-section">
+
+    <div class="table-heading">
+        <h2 class="cart-product">Product</h2>
+        <h2 class="cart-price">Price</h2>
+        <h2 class="cart-quantity">Quantity</h2>
+        <h2 class="cart-total">Total</h2>
+    </div>
+
+
+    <div class="coupon">
+        <!-- <input type="text" name="coupon" id="coupon" placeholder="COUPON CODE">
+        <button type="button" name="coupon" id="coupon">Submit</button> -->
+    </div>
+
+    <div class="checkout">
+        <button type="button" name="update" id="update">Update</button>
+        <button type="button" name="checkout" id="checkout">Checkout</button>
+        <div class="final-cart-total">
+            <h3 class="price">...</h3>
+        </div>
+    </div>
+
+    <div class="keep-shopping">
+        <button type="button" name="keep-shopping" id="keep-shopping">Reserve more</button>
+    </div>
+
+</div>
+{% endblock %} {% block js%} {% if user.is_authenticated %}
+<script type="text/javascript">
+    var _isLoggedIn = true;
+</script>
+{% else %}
+<script type="text/javascript">
+    var _isLoggedIn = false;
+</script>
+{% endif %}
+
+<script>
+    var _selectedList = [];
+    $(document).ready(function() {
+        if (!IsUserLoggedIn()) {
+            //$('#logged-in-info').hide();
+        } else {
+            notificationBadgeCounter();
+        }
+        populateCart();
+        $(document).on('keyup mouseup', '.cart-1-quantity', function() {
+            var quantity = $(this).val()
+            var pid = $(this).attr('p-id');
+            if (quantity < 0) {
+                $(this).val(0)
+                return;
+            }
+            UpdateProduct(pid, quantity)
+        })
+        $(document).on('click', '.remove', function() {
+            var pid = $(this).attr('p-id');
+
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'product_reserve_remove' %}",
+                data: {
+                    "productID": pid
+                },
+                success: function(response) {
+                    alert(response.result);
+                    populateCart();
+                    notificationBadgeCounter();
+                },
+                error: function(response) {
+                    console.log(response)
+                }
+            })
+
+        })
+
+    });
+
+    function populateCart() {
+        $('.table-content').remove();
+        _selectedList = JSON.parse(localStorage.getItem('_selectedList'));
+
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'product_reserve_list' %}",
+            success: function(response) {
+                var sum = 0;
+                $.each(response.result, function(i, v) {
+                    sum = sum + (v.Quanity * v.Price);
+                    $('.table-heading').after('<div class="table-content"> \
+                <div class="cart-product"> \
+                    <div class="cart-image-box"> \
+                        <div class="cart-images" style="background-image: url(\'' + v.URL + '\');"></div> \
+                    </div> \
+                    <h2 class="cart-item">' + v.Title + '</h2> \
+                    <p class="cart-description">' + v.Description + '</p> \
+                </div> \
+                <div class="cart-price"> \
+                    <h3 class="price">$' + v.Price + '</h3> \
+                </div> \
+                <div class="cart-quantity"> \
+                    <input disabled type="number" name="cart-1-quantity" class="cart-1-quantity" p-id="' + v.ID + '" value="' + v.Quanity + '"> \
+                </div> \
+                <div class="cart-total"> \
+                    <h3 class="price">$' + (parseFloat(v.Quanity * v.Price).toFixed(2)) + '</h3> \
+                    <button type="button" class="remove" name="remove-3" p-id="' + v.ID + '">x</button> \
+                </div> \
+        </div>')
+
+                });
+                $('.final-cart-total .price').html(parseFloat(sum).toFixed(2));
+                notificationBadgeCounter();
+            },
+            error: function(response) {
+                console.log(response)
+            }
+        })
+
+    }
+
+    function IsUserLoggedIn() {
+        return _isLoggedIn;
+    }
+
+    function notificationBadgeCounter() {
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'product_reserve_count' %}",
+            success: function(response) {
+                var count = response.result;
+                $(".icon-badge").html(count)
+
+            },
+            error: function(response) {
+                console.log(response)
+            }
+        })
+
+
+
+    }
+
+
+    function UpdateProduct(pid, quantity) {
+        _selectedList = JSON.parse(localStorage.getItem('_selectedList'));
+        if (_selectedList == null)
+            _selectedList = [];
+
+        // var pid = $(this).attr('p-id');
+        // var quantity = $(this).siblings('.quantity').val();
+
+        $.getJSON('assets/json/product.json', function(productList) {
+            var new_arr = $.grep(productList, function(n, i) { // just use arr
+                return n.ID == pid;
+            });
+            var curr_object = new_arr[0];
+            curr_object.Quanity = quantity;
+            //REMOVED THE CURRENT OBJECT FROM THE LOCAL STORAGE LIST
+            _selectedList = $.grep(_selectedList, function(n, i) { // just use arr
+                return n.ID != curr_object.ID;
+            });
+
+            _selectedList.push(curr_object);
+
+            localStorage.setItem('_selectedList', JSON.stringify(_selectedList));
+            //MessageShow('Info', 'The product has been added to the cart');
+            notificationBadgeCounter();
+            populateCart();
+            //console.log(new_arr)
+            // alert(pid)
+
+        });
+    }
+
+    document.getElementById("keep-shopping").onclick = function() {
+        location.href = "{% url 'index' %}";
+    };
+</script>
+
+{% endblock %}

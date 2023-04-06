@@ -1,0 +1,25 @@
+/* IMAGES */
+
+#dumple {
+    background-image: url("../images/items/dumple.jpg");
+}
+
+#dumple-small {
+    background-image: url("../images/items/dumple-small.jpg")
+}
+
+#dumple-color {
+    background-image: url("../images/items/dumple-color.jpg")
+}
+
+#lift-up {
+    background-image: url("../images/items/lift-up.jpg")
+}
+
+#power-lift {
+    background-image: url("../images/items/power-lift.jpg")
+}
+
+#weight-lift {
+    background-image: url("../images/items/weight-lift.jpg")
+}

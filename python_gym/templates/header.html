@@ -1,0 +1,45 @@
+{% load static %}
+<div class="navik-header header-shadow">
+    <div class="container">
+
+        <!-- Navik header -->
+        <div class="navik-header-container">
+
+            <!--Logo-->
+            <div class="logo" data-mobile-logo="{% static '/assets/images/gym-icon.jpg' %}" data-sticky-logo="{% static '/assets/images/gym-icon.jpg' %}">
+                <a href="{% url 'index' %}"><img src="{% static '/assets/images/gym-icon.jpg' %}" alt="logo" /></a>
+            </div>
+
+            <!-- Burger menu -->
+            <div class="burger-menu">
+                <div class="line-menu line-half first-line"></div>
+                <div class="line-menu"></div>
+                <div class="line-menu line-half last-line"></div>
+
+            </div>
+
+            <!--Navigation menu-->
+            <nav class="navik-menu menu-caret submenu-top-border submenu-scale">
+
+                <ul class="list-unstyled">
+                    <li class="current-menu">
+                        <a href="{% url 'index' %}"> <i class="fas fa-home"></i> Home</a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'reserve' %}"><i class="fa fa-shopping-cart"><div class="icon-badge">0</div></i> Reserved</a></li>
+                    <li id="logged-in-info" class="submenu-right">
+                        <a href="#" id="username"> <i class="fa fa-user"></i> {{ request.user.email }}</a>
+                        <ul class="list-unstyled" style="z-index: 100001; ">
+                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+
+        </div>
+
+    </div>
+</div>
