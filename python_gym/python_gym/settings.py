@@ -151,7 +151,7 @@ AUTH_USER_MODEL = "users.CustomUser"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_HOST_USER = 'fajarpm@hotmail.com'
-EMAIL_HOST_PASSWORD = 'Chaachi@454'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 25
 
 CSRF_TRUSTED_ORIGINS=['https://*.mesmerito.COM']
